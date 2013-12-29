@@ -1,6 +1,8 @@
 module NLP.DictParser.Internal where
 
-import           Control.Applicative           hiding (many)
+import           Control.Applicative           hiding (many, (<|>))
+import           Data.Either
+import           Data.Maybe
 import           Debug.Trace
 import           Text.ParserCombinators.Parsec
 
@@ -38,6 +40,7 @@ separator = do
 
 manyTill1 p end = (:) <$> p <*> p `manyTill` end
 
+line1 = (:) <$> noneOf "\n" <*> line
 line =  manyTill anyChar (try newline)
 
 acceptedHeaders :: [String]
@@ -59,26 +62,33 @@ dashLine = string "-" *> spaces *> line
 -- starLine = string "* " *> line
 equalLine = string "=" *> spaces *> line
 
+resync = anyChar `manyTill` (try (eof <|> (separator *> return ())))
+
 dictFile :: GenParser Char st Dict
 dictFile = do
   separator
   headers <- many (header <* separator)
-  defs <- many (defP <* Text.ParserCombinators.Parsec.optional separator)
-  return $ Dict headers defs
+  defs <- many ((Right <$> try defP) <|> (Left <$> resync))
+  trace (show $ lefts defs) return ()
+  return $ Dict headers (rights defs)
 
 defP :: GenParser Char st Def
-defP = Def  <$> line <*> (many withPOS) <?> "Def"
+defP = do
+  d <- Def  <$> line1 <*> (many withPOS) <?> "Def"
+  newline
+  Text.ParserCombinators.Parsec.optional separator
+  return d
 -- defP = Def  <$> line <*> (many withPOS) <?> "Def"
 
 withPOS :: GenParser Char st (POS, [(Translation, [Example])])
-withPOS = (,) <$> pos <*> many translation <?> "POS"
+withPOS = (,) <$> pos <*> many translation
 
 textline = (:) <$> noneOf "=*-\n_" <*> line
 
 pos = do
   string "*"
   spaces
-  choice (goodParts) -- ++ [Broken <$> line])
+  choice (goodParts ++ [Broken <$> line])
 
   where goodParts = map (\(x,res) -> try (string x *> line *> return res) ) parts
 
@@ -104,11 +114,6 @@ example = do
   ex <- line
   return $ case span (/='+') ex of
     (a,[]) -> Untranslated a
-    (a,b)  -> Translated a b
+    (a,(_:b))  -> Translated a b
 
 --  (,) <$> manyTill1 (noneOf "\n+") (try $ string "+") <*> line
-
-main = do
-  -- defs <- map parseChunk . splitOn "-----" <$> getContents
-  -- print defs
-  getContents >>= \c -> print (parse dictFile "text input" (c))

@@ -36,3 +36,9 @@ test-suite tests
                    dictparser,
                    hspec,
                    parsec
+
+executable dictparser
+  main-is: src/main.hs
+  build-depends:   base,
+                   dictparser,
+                   parsec

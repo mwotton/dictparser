@@ -32,3 +32,6 @@ spec = describe "parsers" $ do
       testP pos "* noun\n" `shouldBe` (Right Noun)
     it "should handle extensions" $ do
       testP pos "* noun and some crap\n" `shouldBe` (Right Noun)
+
+    it "should give up if the data sucks" $ do
+      testP pos "* some nonsense\n" `shouldBe` Right (Broken "some nonsense")
