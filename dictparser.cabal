@@ -4,7 +4,7 @@
 name:                dictparser
 version:             0.1.0.0
 synopsis:            Parsec parsers for the DICT format produced by dictfmt -t
--- description:
+description:         Parsec parsers for DICT
 license:             BSD3
 license-file:        LICENSE
 author:              Mark Wotton
