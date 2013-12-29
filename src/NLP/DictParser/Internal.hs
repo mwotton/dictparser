@@ -38,7 +38,7 @@ separator = do
 
 manyTill1 p end = (:) <$> p <*> p `manyTill` end
 
-line =  (manyTill1 anyChar (try newline))
+line =  manyTill anyChar (try newline)
 
 acceptedHeaders :: [String]
 acceptedHeaders = ["short",
@@ -78,7 +78,7 @@ textline = (:) <$> noneOf "=*-\n_" <*> line
 pos = do
   string "*"
   spaces
-  choice (goodParts ++ [Broken <$> line])
+  choice (goodParts) -- ++ [Broken <$> line])
 
   where goodParts = map (\(x,res) -> try (string x *> line *> return res) ) parts
 
