@@ -12,12 +12,12 @@ data Example = Translated String String
              | Untranslated String
                deriving (Show,Eq)
 
-data Def = Def Headword [(String, [(Translation, [Example])])]
-           deriving (Show,Eq)
+data Def a = Def Headword [(a, [(Translation, [Example])])]
+            deriving (Show,Eq)
 
 data Dict = Dict {
   headers     :: [(String, String)],
-  definitions :: [Def]
+  definitions :: [Def String]
 } deriving (Show,Eq)
 
 
@@ -60,7 +60,7 @@ dictFile = do
   trace (show $ lefts defs) return ()
   return $ Dict headers (rights defs)
 
-defP :: GenParser Char st Def
+defP :: GenParser Char st (Def String)
 defP = do
   d <- Def  <$> line1 <*> (many withPOS) <?> "Def"
   newline
