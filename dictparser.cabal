@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                dictparser
-version:             0.1.1.0
+version:             0.1.1.1
 synopsis:            Parsec parsers for the DICT format produced by dictfmt -t
 description:         Parsec parsers for DICT
 license:             BSD3

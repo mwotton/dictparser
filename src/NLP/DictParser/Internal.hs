@@ -15,9 +15,9 @@ data Example = Translated String String
 data Def a = Def Headword [(a, [(Translation, [Example])])]
             deriving (Show,Eq)
 
-data Dict = Dict {
+data Dict a = Dict {
   headers     :: [(String, String)],
-  definitions :: [Def String]
+  definitions :: [Def a]
 } deriving (Show,Eq)
 
 
@@ -52,7 +52,7 @@ equalLine = string "=" *> spaces *> line
 
 resync = anyChar `manyTill` (try (eof <|> (separator *> return ())))
 
-dictFile :: GenParser Char st Dict
+dictFile :: GenParser Char st (Dict String)
 dictFile = do
   separator
   headers <- many (header <* separator)
