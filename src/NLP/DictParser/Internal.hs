@@ -6,25 +6,13 @@ import           Data.Maybe
 import           Debug.Trace
 import           Text.ParserCombinators.Parsec
 
-data POS = Verb
-         | Adjective
-         | Noun
-         | Exclamation
-         | Informal
-         | Conjugation
-         | Number
-         | Adverb
-         | Pronoun
-         | Broken String
-  deriving (Show,Eq)
-
 type Headword = String
 type Translation = String
 data Example = Translated String String
              | Untranslated String
                deriving (Show,Eq)
 
-data Def = Def Headword [(POS, [(Translation, [Example])])]
+data Def = Def Headword [(String, [(Translation, [Example])])]
            deriving (Show,Eq)
 
 data Dict = Dict {
@@ -80,7 +68,7 @@ defP = do
   return d
 -- defP = Def  <$> line <*> (many withPOS) <?> "Def"
 
-withPOS :: GenParser Char st (POS, [(Translation, [Example])])
+withPOS :: GenParser Char st (String, [(Translation, [Example])])
 withPOS = (,) <$> pos <*> many translation
 
 textline = (:) <$> noneOf "=*-\n_" <*> line
@@ -88,20 +76,11 @@ textline = (:) <$> noneOf "=*-\n_" <*> line
 pos = do
   string "*"
   spaces
-  choice (goodParts ++ [Broken <$> line])
+  line
+  -- choice (goodParts ++ [Broken <$> line])
 
-  where goodParts = map (\(x,res) -> try (string x *> line *> return res) ) parts
+  -- where goodParts = map (\(x,res) -> try (string x *> line *> return res) ) parts
 
-parts = [("verb", Verb)
-        ,("noun", Noun)
-        ,("number", Number)
-        ,("khẩu ngữ", Informal)
-        ,("adj", Adjective)
-        ,("adv", Adverb)
-        ,("excl", Exclamation)
-        ,("pronoun", Pronoun)
-        ,("conj", Conjugation)
-        ]
 
 
 translation :: GenParser Char st (Translation, [Example])

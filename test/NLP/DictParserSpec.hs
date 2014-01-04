@@ -27,11 +27,6 @@ spec = describe "parsers" $ do
       testP line "\n" `shouldBe` (Right "")
   describe "should parse parts of speech" $ do
     it "should handle verbs" $ do
-      testP pos  "* verb\n" `shouldBe` (Right Verb)
+      testP pos  "* verb\n" `shouldBe` (Right "verb")
     it "should handle nouns" $ do
-      testP pos "* noun\n" `shouldBe` (Right Noun)
-    it "should handle extensions" $ do
-      testP pos "* noun and some crap\n" `shouldBe` (Right Noun)
-
-    it "should give up if the data sucks" $ do
-      testP pos "* some nonsense\n" `shouldBe` Right (Broken "some nonsense")
+      testP pos "* noun\n" `shouldBe` (Right "noun")
