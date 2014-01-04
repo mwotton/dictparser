@@ -9,6 +9,8 @@ license:             BSD3
 license-file:        LICENSE
 author:              Mark Wotton
 maintainer:          mwotton@gmail.com
+Homepage:            http://github.com/mwotton/dictparser
+Bug-Reports:         http://github.com/mwotton/dictparser/issues
 copyright:           Mark Wotton, 2013
 category:            Language
 build-type:          Simple
@@ -19,8 +21,7 @@ source-repository head
   type:     git
   location: git://github.com/mwotton/dictparser.git
 
-homepage: http://github.com/mwotton/dictparser
-Bug-Reports:         http://github.com/mwotton/dictparser/issues
+
 
 library
   exposed-modules:     NLP.DictParser,
