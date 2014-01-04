@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                dictparser
-version:             0.1.0.1
+version:             0.1.0.2
 synopsis:            Parsec parsers for the DICT format produced by dictfmt -t
 description:         Parsec parsers for DICT
 license:             BSD3
@@ -12,12 +12,15 @@ maintainer:          mwotton@gmail.com
 copyright:           Mark Wotton, 2013
 category:            Language
 build-type:          Simple
--- extra-source-files:
+
 cabal-version:       >=1.10
 
 source-repository head
   type:     git
-  location: http://github.com/mwotton/dictparser
+  location: git://github.com/mwotton/dictparser.git
+
+homepage: http://github.com/mwotton/dictparser
+Bug-Reports:         http://github.com/mwotton/dictparser/issues
 
 library
   exposed-modules:     NLP.DictParser,
