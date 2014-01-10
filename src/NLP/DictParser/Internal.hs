@@ -2,14 +2,11 @@ module NLP.DictParser.Internal where
 
 import           Control.Applicative           hiding (many, (<|>))
 import           Data.Either
-import           Debug.Trace
+import           Data.List.Split               (splitOn)
 import           NLP.DictParser.Types
 import           Text.ParserCombinators.Parsec
 
-separator = do
-  string "_____"
-  newline
-  newline
+separator = "_____\n\n"
 
 manyTill1 p end = (:) <$> p <*> p `manyTill` end
 
@@ -21,11 +18,9 @@ acceptedHeaders = ["short",
                    "info",
                    "url"]
 
-header = do
-  trace ("trying headers") (return ())
+headerP = do
   string "00-database-"
   header <- choice $ map string acceptedHeaders
-  trace (show ("headers",header)) (return ())
   newline
   descriptions <- many dashLine
   newline
@@ -35,23 +30,38 @@ dashLine = string "-" *> spaces *> line
 -- starLine = string "* " *> line
 equalLine = string "=" *> spaces *> line
 
-resync = anyChar `manyTill` (try (eof <|> (separator *> return ())))
+-- resync = anyChar `manyTill` (try (eof <|> (separator *> return ())))
 
-dictFile :: GenParser Char st (Dict String)
-dictFile = do
-  separator
-  headers <- many (header <* separator)
-  defs <- many ((Right <$> try defP) <|> (Left <$> resync))
-  trace (show $ lefts defs) return ()
-  return $ Dict headers (rights defs)
+
+parseString :: String -> (Dict String, [String])
+parseString input = (Dict (rights $ map (tryParse headerP) headersText) valid,
+                   map show invalid)
+
+  where (headersText,body) = span (isRight . tryParse headerP) . map strip $ splitOn separator input
+        (invalid, valid) = partitionEithers $ map (tryParse defP) body
+        isHeader x = True
+
+isRight (Right _) = True
+isRight _ = False
+
+tryParse p body = case parse p "(none)" body of
+  Left _ -> Left body
+  Right x -> Right x
+
+strip = lstrip . rstrip
+lstrip = dropWhile (`elem` " \t")
+rstrip = reverse . lstrip . reverse
+
+-- dictFile :: GenParser Char st (Dict String)
+-- dictFile = do
+--   separator
+--   headers <- many (header <* separator)
+--   defs <- many ((Right <$> try defP) <|> (Left <$> resync))
+--   trace (show $ lefts defs) return ()
+--   return $ Dict headers (rights defs)
 
 defP :: GenParser Char st (Def String)
-defP = do
-  d <- Def  <$> line1 <*> (many withPOS) <?> "Def"
-  newline
-  Text.ParserCombinators.Parsec.optional separator
-  return d
--- defP = Def  <$> line <*> (many withPOS) <?> "Def"
+defP = Def  <$> line1 <*> (many withPOS) <?> "Def"
 
 withPOS :: GenParser Char st (String, [(Translation, [Example])])
 withPOS = (,) <$> pos <*> many translation

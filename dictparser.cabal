@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                dictparser
-version:             0.2.0.0
+version:             0.3.0.0
 synopsis:            Parsec parsers for the DICT format produced by dictfmt -t
 description:         Parsec parsers for DICT
 license:             BSD3
@@ -29,7 +29,8 @@ library
                        NLP.DictParser.Internal
   -- other-extensions:
   build-depends:       base <5,
-                       parsec
+                       parsec,
+                       split
   hs-source-dirs:      src
 
   default-language:    Haskell2010

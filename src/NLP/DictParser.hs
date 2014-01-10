@@ -1,5 +1,5 @@
-module NLP.DictParser (dictFile,
-                       module NLP.DictParser.Types
+ module NLP.DictParser (parseString,
+                        module NLP.DictParser.Types
                        ) where
 
 import           NLP.DictParser.Internal
