@@ -2,24 +2,9 @@ module NLP.DictParser.Internal where
 
 import           Control.Applicative           hiding (many, (<|>))
 import           Data.Either
-import           Data.Maybe
 import           Debug.Trace
+import           NLP.DictParser.Types
 import           Text.ParserCombinators.Parsec
-
-type Headword = String
-type Translation = String
-data Example = Translated String String
-             | Untranslated String
-               deriving (Show,Eq)
-
-data Def a = Def Headword [(a, [(Translation, [Example])])]
-            deriving (Show,Eq)
-
-data Dict a = Dict {
-  headers     :: [(String, String)],
-  definitions :: [Def a]
-} deriving (Show,Eq)
-
 
 separator = do
   string "_____"
