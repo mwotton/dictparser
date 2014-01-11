@@ -30,6 +30,6 @@ script:
  - cabal-1.18 check
  - cabal-1.18 sdist   # tests that a source-distribution can be generated
 
-matrix:
-  allow_failures:
-    - env: GHCVER=head
+#matrix:
+#  allow_failures:
+#    - env: GHCVER=head
