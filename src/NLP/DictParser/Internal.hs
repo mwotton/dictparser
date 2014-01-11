@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 module NLP.DictParser.Internal where
 
 import           Control.Applicative           hiding (many, (<|>))
@@ -41,8 +42,11 @@ parseString input = (Dict (rights $ map (tryParse headerP) headersText) valid,
         (invalid, valid) = partitionEithers $ map (tryParse defP) body
         isHeader x = True
 
+-- this is awful
+#if __GLASGOW_HASKELL__ < 772
 isRight (Right _) = True
 isRight _ = False
+#endif
 
 tryParse p body = case parse p "(none)" body of
   Left _ -> Left body
