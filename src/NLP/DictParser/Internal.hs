@@ -43,7 +43,7 @@ parseString input = (Dict (rights $ map (tryParse headerP) headersText) valid,
         isHeader x = True
 
 -- this is awful
-#if __GLASGOW_HASKELL__ < 772
+#if __GLASGOW_HASKELL__ < 707
 isRight (Right _) = True
 isRight _ = False
 #endif
